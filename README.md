@@ -19,6 +19,8 @@
 
 Matrix AJAX Chat is an experimental web chat packed into a single `index.php` file. It combines PHP sessions, SQLite persistence, asynchronous requests and a Matrix-inspired UI. The application supports global and private conversation flows and keeps online-presence information locally.
 
+It can be useful for users searching for a **PHP AJAX chat**, **SQLite chat application**, **single-file PHP chat**, **private messaging system**, or a lightweight Matrix-style web chat project.
+
 ### ✨ Features
 - Matrix-inspired interface
 - PHP + SQLite architecture
@@ -46,6 +48,8 @@ Copy `index.php` to a PHP-enabled web directory and ensure PHP can write to that
 
 Matrix AJAX Chat to eksperymentalny czat internetowy zamknięty w jednym pliku `index.php`. Łączy sesje PHP, bazę SQLite, komunikację asynchroniczną oraz interfejs inspirowany Matrixem. Obsługuje rozmowy globalne i prywatne oraz lokalne śledzenie aktywnych użytkowników.
 
+Projekt może zainteresować osoby szukające **czatu PHP AJAX**, **aplikacji czatowej SQLite**, **jednoplikowego czatu PHP**, prywatnych wiadomości albo lekkiego czatu webowego w stylistyce Matrix.
+
 ### ✨ Funkcje
 - interfejs inspirowany Matrixem
 - PHP + SQLite
@@ -68,6 +72,10 @@ Matrix AJAX Chat to eksperymentalny czat internetowy zamknięty w jednym pliku `
 Umieść `index.php` w katalogu serwera WWW z obsługą PHP i zapewnij aplikacji możliwość zapisu w katalogu. Baza SQLite i lokalny sekret serwera zostaną utworzone w razie potrzeby.
 
 ---
+
+## 🔎 Discoverability / Keywords
+
+`php chat` · `ajax chat` · `sqlite chat` · `private messaging` · `single file php` · `matrix ui` · `web chat` · `php sqlite` · `csrf` · `sessions`
 
 ## 🔐 Security / Bezpieczeństwo
 This is an experimental project. Before exposing it publicly, review server permissions, HTTPS configuration, authentication policy, backups and application security for your deployment environment.
