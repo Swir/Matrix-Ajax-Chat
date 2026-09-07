@@ -2,85 +2,130 @@
 
 # 🟢 Matrix AJAX Chat
 
-**Single-file PHP chat with a Matrix-inspired interface, SQLite storage and asynchronous messaging**  
-**Jednoplikowy czat PHP w stylistyce Matrix z SQLite i komunikacją asynchroniczną**
+### Single-File PHP Chat with SQLite, Private Messaging & Matrix UI
+
+**PHP • AJAX • SQLite • Sessions • CSRF Protection • File Sharing**
 
 ![PHP](https://img.shields.io/badge/PHP-8.x-777BB4?logo=php&logoColor=white)
-![SQLite](https://img.shields.io/badge/Database-SQLite-003B57?logo=sqlite)
+![SQLite](https://img.shields.io/badge/Database-SQLite-003B57?logo=sqlite&logoColor=white)
 ![Security](https://img.shields.io/badge/Security-CSRF%20%7C%20Sessions-success)
-![Style](https://img.shields.io/badge/UI-Matrix-00ff66)
-![Author](https://img.shields.io/badge/Author-Swir-ff4fa3)
+![UI](https://img.shields.io/badge/UI-Matrix-00ff66)
+![Architecture](https://img.shields.io/badge/Architecture-Single%20File-111111)
 
 </div>
 
 ---
 
-## 🇬🇧 English
+## 🚀 About
 
-Matrix AJAX Chat is an experimental web chat packed into a single `index.php` file. It combines PHP sessions, SQLite persistence, asynchronous requests and a Matrix-inspired UI. The application supports global and private conversation flows and keeps online-presence information locally.
+**Matrix AJAX Chat** is an experimental web chat application packed into a single `index.php` file. It combines PHP sessions, SQLite persistence, asynchronous requests and a Matrix-inspired interface in a compact deployment model.
 
-It can be useful for users searching for a **PHP AJAX chat**, **SQLite chat application**, **single-file PHP chat**, **private messaging system**, or a lightweight Matrix-style web chat project.
+The application includes global chat, private conversation flows, online-user tracking, account handling and controlled file uploads. Stored message payloads are encrypted server-side before being written to the local SQLite database.
 
-### ✨ Features
-- Matrix-inspired interface
-- PHP + SQLite architecture
-- user accounts and sessions
-- CSRF protection
-- regenerated session identifiers
-- global chat and private-message flow
-- online-user tracking
-- server-side message storage
-- AES-256-CBC encryption for stored message payloads using a locally generated server secret
-- automatic history trimming
+It is useful for users searching for a **PHP AJAX chat**, **SQLite chat application**, **single-file PHP chat**, **private messaging system**, **Matrix style web chat** or a compact self-hosted chat project.
 
-### 🛠 Requirements
-- PHP with PDO SQLite support
+---
+
+## ✨ Features
+
+| Feature | Description |
+|---|---|
+| 🟢 Matrix UI | Terminal-inspired Matrix visual style |
+| 💬 Global chat | Shared public conversation channel |
+| 🔐 Private messaging | Private conversation invitation / acceptance flow |
+| 👥 User accounts | Session-based registered users and guest mode |
+| 🟩 Online presence | Tracks recently active users |
+| 🗄️ SQLite | Local database with no external DB server required |
+| 🛡️ CSRF protection | CSRF token verification for write actions |
+| 🔄 Session hardening | Session ID regeneration |
+| 🔒 Stored-message encryption | AES-256-CBC encryption of message payloads at rest |
+| 📎 File sharing | Controlled uploads for selected file types |
+| 🧹 History management | Automatically limits retained message history |
+| ⚡ AJAX workflow | Messages and presence update asynchronously |
+
+---
+
+## 🧠 Architecture
+
+```text
+Browser
+   │
+   ├── AJAX requests
+   ▼
+index.php
+   │
+   ├── Sessions / CSRF
+   ├── Message encryption
+   ├── Upload validation
+   ▼
+SQLite Database
+```
+
+The application creates its local SQLite database and server-secret file when required.
+
+---
+
+## 📋 Requirements
+
+- PHP 8.x recommended
+- PDO SQLite extension
 - OpenSSL PHP extension
-- writable application directory for the SQLite database and local server secret
-- web server such as Apache or Nginx
-
-### 🚀 Quick start
-Copy `index.php` to a PHP-enabled web directory and ensure PHP can write to that directory. The application creates its local database and server-secret file when needed.
+- Fileinfo extension for upload MIME validation
+- Writable application directory
+- Apache, Nginx or another PHP-capable web server
 
 ---
 
-## 🇵🇱 Polski
+## 📦 Quick Start
 
-Matrix AJAX Chat to eksperymentalny czat internetowy zamknięty w jednym pliku `index.php`. Łączy sesje PHP, bazę SQLite, komunikację asynchroniczną oraz interfejs inspirowany Matrixem. Obsługuje rozmowy globalne i prywatne oraz lokalne śledzenie aktywnych użytkowników.
+```bash
+git clone https://github.com/Swir/Matrix-Ajax-Chat.git
+```
 
-Projekt może zainteresować osoby szukające **czatu PHP AJAX**, **aplikacji czatowej SQLite**, **jednoplikowego czatu PHP**, prywatnych wiadomości albo lekkiego czatu webowego w stylistyce Matrix.
+Copy `index.php` to a PHP-enabled web directory and ensure PHP has permission to create/write the local database, secret file and upload directory.
 
-### ✨ Funkcje
-- interfejs inspirowany Matrixem
-- PHP + SQLite
-- konta użytkowników i sesje
-- ochrona CSRF
-- regeneracja identyfikatora sesji
-- czat globalny i rozmowy prywatne
-- lista użytkowników online
-- lokalna historia wiadomości
-- szyfrowanie zapisanych treści AES-256-CBC przy użyciu lokalnego sekretu serwera
-- automatyczne ograniczanie historii
+For development you can also use PHP's built-in server:
 
-### 🛠 Wymagania
-- PHP z PDO SQLite
-- rozszerzenie OpenSSL
-- możliwość zapisu w katalogu aplikacji
-- Apache, Nginx lub inny serwer obsługujący PHP
+```bash
+php -S localhost:8080
+```
 
-### 🚀 Szybki start
-Umieść `index.php` w katalogu serwera WWW z obsługą PHP i zapewnij aplikacji możliwość zapisu w katalogu. Baza SQLite i lokalny sekret serwera zostaną utworzone w razie potrzeby.
+Then open:
+
+```text
+http://localhost:8080
+```
 
 ---
 
-## 🔎 Discoverability / Keywords
+## 🔐 Security Notes
 
-`php chat` · `ajax chat` · `sqlite chat` · `private messaging` · `single file php` · `matrix ui` · `web chat` · `php sqlite` · `csrf` · `sessions`
+This is an experimental self-hosted project, not a security-audited messaging platform. Before exposing it to the public Internet, review HTTPS, server permissions, authentication requirements, upload policy, backups, rate limiting and deployment-specific security controls.
 
-## 🔐 Security / Bezpieczeństwo
-This is an experimental project. Before exposing it publicly, review server permissions, HTTPS configuration, authentication policy, backups and application security for your deployment environment.
+Encryption at rest protects stored message payloads from casual database inspection, but it is not presented as end-to-end encryption.
 
-To projekt eksperymentalny. Przed wystawieniem go publicznie sprawdź uprawnienia serwera, HTTPS, politykę uwierzytelniania, kopie zapasowe oraz bezpieczeństwo całego środowiska.
+---
 
-## 👤 Author / Autor
-Developed by **Swir**.
+## 🌍 Language
+
+The current application interface is primarily Polish. A separate English variant can be maintained without replacing the original Polish build.
+
+---
+
+## 🔍 Discoverability
+
+`php ajax chat` • `php sqlite chat` • `single file php chat` • `matrix chat php` • `private messaging php` • `self hosted chat php` • `ajax messaging app` • `sqlite web chat` • `php chat source code` • `matrix style web app`
+
+---
+
+## 👨‍💻 Author
+
+Developed by **Swir** — [@Swir](https://github.com/Swir)
+
+<div align="center">
+
+### 🟢 PHP + SQLite + Matrix vibes
+
+⭐ **Star the repository if you like the project!**
+
+</div>
