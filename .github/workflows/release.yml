@@ -1,0 +1,64 @@
+name: Web Release
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[release]')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: pdo_sqlite, openssl, fileinfo, mbstring
+
+      - name: Test
+        run: |
+          find . -type f -name '*.php' -not -path './data/*' -print0 | xargs -0 -n1 php -l
+          php tests/run.php
+
+      - name: Resolve version
+        id: meta
+        shell: bash
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            TAG="${GITHUB_REF_NAME}"
+          else
+            VERSION="$(php -r "require 'src/Config.php'; echo \MatrixChat\Config::VERSION;")"
+            TAG="v${VERSION}"
+          fi
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "name=Matrix AJAX Chat ${TAG}" >> "$GITHUB_OUTPUT"
+
+      - name: Build deploy package
+        shell: bash
+        run: |
+          set -euo pipefail
+          PKG="Matrix-Ajax-Chat-${{ steps.meta.outputs.tag }}"
+          mkdir -p "dist/${PKG}"
+          cp index.php api.php download.php manifest.webmanifest sw.js README.md CHANGELOG.md SECURITY.md .gitignore "dist/${PKG}/"
+          cp -R src assets data "dist/${PKG}/"
+          rm -rf "dist/${PKG}/data/"*.sqlite "dist/${PKG}/data/"*.key "dist/${PKG}/data/uploads/"* || true
+          (cd dist && zip -r "${PKG}.zip" "${PKG}" >/dev/null)
+          sha256sum "dist/${PKG}.zip" > "dist/${PKG}.zip.sha256"
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.meta.outputs.tag }}
+          target_commitish: ${{ github.sha }}
+          name: ${{ steps.meta.outputs.name }}
+          generate_release_notes: true
+          make_latest: true
+          files: |
+            dist/Matrix-Ajax-Chat-${{ steps.meta.outputs.tag }}.zip
+            dist/Matrix-Ajax-Chat-${{ steps.meta.outputs.tag }}.zip.sha256
