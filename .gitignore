@@ -1,0 +1,12 @@
+/data/*
+!/data/.gitignore
+!/data/.htaccess
+!/data/uploads/
+/data/uploads/*
+!/data/uploads/.gitignore
+/matrix_database.db
+/matrix_secret.key
+/matrix_uploads/
+*.log
+.DS_Store
+Thumbs.db

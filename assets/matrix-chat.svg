@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+<title id="title">Matrix AJAX Chat</title>
+<desc id="desc">Blue neon terminal chat icon by Swir</desc>
+<defs>
+  <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#4cc9ff"/>
+    <stop offset="1" stop-color="#4361ee"/>
+  </linearGradient>
+  <filter id="glow"><feGaussianBlur stdDeviation="10" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<rect x="22" y="22" width="468" height="468" rx="108" fill="#050816" stroke="#1d355f" stroke-width="12"/>
+<path d="M116 142h280c22 0 40 18 40 40v142c0 22-18 40-40 40H246l-79 60 18-60h-69c-22 0-40-18-40-40V182c0-22 18-40 40-40z" fill="#091b35" stroke="url(#g)" stroke-width="16" filter="url(#glow)"/>
+<path d="M142 220l43 36-43 36M214 300h92M337 210v92M365 210v92" fill="none" stroke="#d9f5ff" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="379" cy="330" r="18" fill="#5ee6a8" filter="url(#glow)"/>
+</svg>
