@@ -5,7 +5,7 @@ namespace MatrixChat;
 
 final class Config
 {
-    public const VERSION = '7.0.0';
+    public const VERSION = '7.1.0';
     public const HISTORY_LIMIT = 500;
     public const ONLINE_TTL_SECONDS = 25;
     public const MAX_MESSAGE_LENGTH = 1000;
@@ -35,6 +35,14 @@ final class Config
     public static function uploadsDir(): string
     {
         return self::dataDir() . '/uploads';
+    }
+
+    public static function legacyUploadsDir(): string
+    {
+        $override = getenv('MATRIX_CHAT_LEGACY_UPLOAD_DIR');
+        return $override !== false && $override !== ''
+            ? rtrim($override, DIRECTORY_SEPARATOR)
+            : self::rootDir() . '/matrix_uploads';
     }
 
     /** @return array<string,string> */
