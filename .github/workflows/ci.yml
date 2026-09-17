@@ -27,5 +27,11 @@ jobs:
         run: |
           set -euo pipefail
           find . -type f -name '*.php' -not -path './data/*' -print0 | xargs -0 -n1 php -l
+      - name: JavaScript syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check assets/app.js
+          node --check sw.js
       - name: Tests
         run: php tests/run.php
