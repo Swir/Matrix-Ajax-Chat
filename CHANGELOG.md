@@ -1,5 +1,25 @@
 # Changelog
 
+## 7.1.0 - 2026-09-17
+
+### Restored
+- classic terminal slash commands: `/help`, `/ping`, `/clear`, `/whoami`
+- live latency display in the connection status
+- optional terminal message/invite sounds with a persistent mute toggle
+- fullscreen control from the sidebar
+- live character counter and local typing/upload status indicators
+- persistent accepted private-conversation shortcuts, including peers that are temporarily offline
+- original attachment filenames and secure inline image previews
+- authenticated read compatibility for legacy `::FILE_TAG::matrix_uploads/...` attachments from the v6 single-file build
+
+### Improved
+- attachment metadata is returned without exposing storage paths
+- legacy attachment paths are strictly validated and MIME types are re-detected before serving
+- legacy private attachments remain restricted to their sender/recipient
+- PWA static cache bumped to a versioned v7.1 cache and changed to network-first so upgraded JavaScript/CSS are not pinned to stale assets
+- README documents the real legacy-upgrade path, including preservation of `matrix_uploads/`
+- regression tests cover modern attachment authorization and legacy attachment compatibility
+
 ## 7.0.0 - 2026-09-17
 
 ### Added
