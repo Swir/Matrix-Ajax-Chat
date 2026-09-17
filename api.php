@@ -25,7 +25,36 @@ try {
 
     if ($action === 'messages') {
         $target = (string)($_GET['target'] ?? 'global');
-        Http::json(['ok' => true] + $chat->messages($user['name'], $target));
+        $payload = $chat->messages($user['name'], $target);
+
+        foreach ($payload['messages'] as &$message) {
+            $body = (string)($message['msg'] ?? '');
+            if (str_starts_with($body, '::UPLOAD::')) {
+                $token = substr($body, strlen('::UPLOAD::'));
+                $file = $uploads->findAccessible($token, $user['name']);
+                if ($file) {
+                    $message['attachment'] = [
+                        'token' => $token,
+                        'name' => (string)$file['original_name'],
+                        'mime' => (string)$file['mime'],
+                        'size' => (int)$file['size'],
+                    ];
+                }
+            } elseif (str_starts_with($body, '::FILE_TAG::')) {
+                $file = $chat->legacyAttachmentForMessage((int)$message['id'], $user['name']);
+                if ($file) {
+                    $message['attachment'] = [
+                        'legacy_message' => (int)$message['id'],
+                        'name' => (string)$file['name'],
+                        'mime' => (string)$file['mime'],
+                        'size' => (int)$file['size'],
+                    ];
+                }
+            }
+        }
+        unset($message);
+
+        Http::json(['ok' => true] + $payload);
     }
 
     Http::requireMethod('POST');
