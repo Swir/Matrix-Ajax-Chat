@@ -139,6 +139,88 @@ final class ChatService
         return ['messages' => array_slice($messages, -120), 'invites' => $states];
     }
 
+    /**
+     * Resolve a v6 single-file attachment marker without exposing the old upload directory directly.
+     *
+     * @return array{name:string,mime:string,size:int,path:string,legacy_message:int}|null
+     */
+    public function legacyAttachmentForMessage(int $messageId, string $currentUser): ?array
+    {
+        if ($messageId < 1) {
+            return null;
+        }
+
+        $stmt = $this->db->prepare(
+            'SELECT id, sender, encrypted_msg, target FROM chat_history WHERE id = ? LIMIT 1'
+        );
+        $stmt->execute([$messageId]);
+        $row = $stmt->fetch();
+        if (!$row) {
+            return null;
+        }
+
+        $target = (string)$row['target'];
+        if (in_array($target, [self::INVITE, self::ACCEPT, self::DECLINE], true)) {
+            return null;
+        }
+        if ($target !== 'global' && !in_array($currentUser, [(string)$row['sender'], $target], true)) {
+            return null;
+        }
+
+        $marker = self::parseLegacyAttachmentMarker($this->crypto->decrypt((string)$row['encrypted_msg']));
+        if ($marker === null) {
+            return null;
+        }
+
+        $path = Config::legacyUploadsDir() . DIRECTORY_SEPARATOR . $marker['stored_name'];
+        if (!is_file($path)) {
+            return null;
+        }
+
+        $finfo = new \finfo(FILEINFO_MIME_TYPE);
+        $mime = (string)$finfo->file($path);
+        if (!isset(Config::allowedUploadMimes()[$mime])) {
+            return null;
+        }
+
+        return [
+            'name' => UploadService::safeOriginalName($marker['original_name']),
+            'mime' => $mime,
+            'size' => (int)filesize($path),
+            'path' => $path,
+            'legacy_message' => (int)$row['id'],
+        ];
+    }
+
+    /** @return array{stored_name:string,original_name:string}|null */
+    public static function parseLegacyAttachmentMarker(string $message): ?array
+    {
+        if (!str_starts_with($message, '::FILE_TAG::')) {
+            return null;
+        }
+
+        $parts = explode('::', $message);
+        if (count($parts) !== 5 || $parts[1] !== 'FILE_TAG') {
+            return null;
+        }
+
+        $legacyPath = str_replace('\\', '/', $parts[2]);
+        if (!str_starts_with($legacyPath, 'matrix_uploads/')) {
+            return null;
+        }
+
+        $storedName = basename($legacyPath);
+        if ($storedName === '' || $storedName !== substr($legacyPath, strlen('matrix_uploads/'))
+            || preg_match('/^[A-Za-z0-9._-]+$/', $storedName) !== 1) {
+            return null;
+        }
+
+        return [
+            'stored_name' => $storedName,
+            'original_name' => $parts[3],
+        ];
+    }
+
     public function canPrivateChat(string $a, string $b): bool
     {
         $messages = $this->messages($a, 'global');
