@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 $tmp = sys_get_temp_dir() . '/matrix-chat-test-' . bin2hex(random_bytes(4));
 putenv('MATRIX_CHAT_DATA_DIR=' . $tmp);
+putenv('MATRIX_CHAT_LEGACY_UPLOAD_DIR=' . $tmp . '/legacy_uploads');
 mkdir($tmp, 0700, true);
+mkdir($tmp . '/legacy_uploads', 0700, true);
 
 require __DIR__ . '/../src/bootstrap.php';
 
@@ -24,7 +26,7 @@ $assert = static function (bool $condition, string $message) use (&$assertions):
 };
 
 try {
-    $assert(Config::VERSION === '7.0.0', 'version');
+    $assert(Config::VERSION === '7.1.0', 'version');
 
     $crypto = new Crypto();
     $plain = "Zażółć gęślą jaźń — Matrix";
@@ -64,6 +66,34 @@ try {
     $assert(end($private['messages'])['msg'] === 'private', 'private chat after acceptance');
 
     $assert(UploadService::safeOriginalName("../../bad\r\nname?.pdf") === 'badname_.pdf', 'safe upload name');
+
+    $token = str_repeat('a', 48);
+    $stored = 'stored.txt';
+    file_put_contents(Config::uploadsDir() . '/' . $stored, 'hello upload');
+    $stmt = $db->prepare(
+        'INSERT INTO uploads (token, sender, target, original_name, mime, size, stored_name, created_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+    );
+    $stmt->execute([$token, 'Alice', 'Bob', 'notes.txt', 'text/plain', 12, $stored, time()]);
+    $uploads = new UploadService($db, $chat);
+    $assert($uploads->findAccessible($token, 'Alice') !== null, 'sender can access modern upload');
+    $assert($uploads->findAccessible($token, 'Bob') !== null, 'private recipient can access modern upload');
+    $assert($uploads->findAccessible($token, 'Mallory') === null, 'third party cannot access private upload');
+
+    $legacyPath = Config::legacyUploadsDir() . '/PAK_demo.txt';
+    file_put_contents($legacyPath, 'legacy attachment');
+    $legacyId = $chat->sendMessage(
+        'Alice',
+        '#4cc9ff',
+        '::FILE_TAG::matrix_uploads/PAK_demo.txt::legacy-notes.txt::txt',
+        'global'
+    );
+    $legacy = $chat->legacyAttachmentForMessage($legacyId, 'Bob');
+    $assert($legacy !== null, 'legacy attachment marker resolves');
+    $assert(($legacy['name'] ?? '') === 'legacy-notes.txt', 'legacy original filename preserved safely');
+    $assert(($legacy['mime'] ?? '') === 'text/plain', 'legacy MIME revalidated from file');
+    $assert(ChatService::parseLegacyAttachmentMarker('::FILE_TAG::matrix_uploads/../secret::x.txt::txt') === null, 'legacy traversal rejected');
+    $assert(ChatService::parseLegacyAttachmentMarker('normal message') === null, 'normal message is not attachment');
 
     echo "OK {$assertions} assertions\n";
 } finally {
