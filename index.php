@@ -141,7 +141,14 @@ function e(string $value): string
      data-accepted-label="<?= e($t['accepted']) ?>"
      data-declined-label="<?= e($t['declined']) ?>"
      data-accept-label="<?= e($t['accept']) ?>"
-     data-decline-label="<?= e($t['decline']) ?>">
+     data-decline-label="<?= e($t['decline']) ?>"
+     data-sound-on-label="<?= e($t['sound_on']) ?>"
+     data-sound-off-label="<?= e($t['sound_off']) ?>"
+     data-uploading-label="<?= e($t['uploading']) ?>"
+     data-cmd-help="<?= e($t['cmd_help']) ?>"
+     data-cmd-pong="<?= e($t['cmd_pong']) ?>"
+     data-cmd-cleared="<?= e($t['cmd_cleared']) ?>"
+     data-cmd-unknown="<?= e($t['cmd_unknown']) ?>">
     <aside class="sidebar">
         <header class="brand">
             <img src="assets/matrix-chat.svg" width="44" height="44" alt="">
@@ -159,6 +166,11 @@ function e(string $value): string
         </div>
         <div id="online-list" class="online-list" aria-live="polite"></div>
 
+        <div class="sidebar-title private-title">
+            <span><?= e($t['private_chats']) ?></span>
+        </div>
+        <div id="private-list" class="private-list" aria-live="polite"></div>
+
         <div class="sidebar-bottom">
             <div class="identity">
                 <span class="status-dot"></span>
@@ -169,6 +181,8 @@ function e(string $value): string
                 <input id="profile-color" type="color" value="<?= e($user['color']) ?>" aria-label="<?= e($t['color']) ?>">
             </div>
             <div class="mini-actions">
+                <button id="fullscreen-toggle" class="link-button" type="button"><?= e($t['fullscreen']) ?></button>
+                <button id="sound-toggle" class="link-button" type="button"><?= e($t['sound_on']) ?></button>
                 <a href="?lang=<?= $lang === 'pl' ? 'en' : 'pl' ?>"><?= $lang === 'pl' ? 'EN' : 'PL' ?></a>
                 <a href="?logout=1"><?= e($t['logout']) ?></a>
             </div>
@@ -187,15 +201,22 @@ function e(string $value): string
         <section id="invite-banner" class="invite-banner hidden" aria-live="polite"></section>
         <section id="messages" class="messages" aria-live="polite" aria-label="Messages"></section>
 
-        <form id="composer" class="composer" autocomplete="off">
-            <input id="message-input" maxlength="<?= Config::MAX_MESSAGE_LENGTH ?>" placeholder="<?= e($t['message']) ?>" required>
-            <label class="file-button" title="<?= e($t['attach']) ?>">
-                <input id="file-input" type="file" hidden accept=".jpg,.jpeg,.png,.gif,.webp,.pdf,.zip,.txt">
-                <span aria-hidden="true">＋</span>
-                <span class="sr-only"><?= e($t['attach']) ?></span>
-            </label>
-            <button class="primary" type="submit"><?= e($t['send']) ?></button>
-        </form>
+        <div class="composer-wrap">
+            <form id="composer" class="composer" autocomplete="off">
+                <input id="message-input" maxlength="<?= Config::MAX_MESSAGE_LENGTH ?>" placeholder="<?= e($t['message']) ?>" required>
+                <label class="file-button" title="<?= e($t['attach']) ?>">
+                    <input id="file-input" type="file" hidden accept=".jpg,.jpeg,.png,.gif,.webp,.pdf,.zip,.txt">
+                    <span aria-hidden="true">＋</span>
+                    <span class="sr-only"><?= e($t['attach']) ?></span>
+                </label>
+                <button class="primary" type="submit"><?= e($t['send']) ?></button>
+            </form>
+            <div class="composer-meta">
+                <span id="typing-status" class="hidden"><?= e($t['typing']) ?></span>
+                <span id="upload-status" class="hidden"><?= e($t['uploading']) ?></span>
+                <span id="char-counter">0 / <?= Config::MAX_MESSAGE_LENGTH ?></span>
+            </div>
+        </div>
     </main>
 </div>
 <script src="assets/app.js" defer></script>

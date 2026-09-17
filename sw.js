@@ -1,4 +1,4 @@
-const CACHE = 'matrix-chat-v7-static';
+const CACHE = 'matrix-chat-v7.1.0-static';
 const STATIC = [
   './assets/app.css',
   './assets/app.js',
@@ -24,5 +24,17 @@ self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
   if (!STATIC.some(path => url.pathname.endsWith(path.replace('./', '/')))) return;
-  event.respondWith(caches.match(event.request).then(hit => hit || fetch(event.request)));
+
+  // Network-first keeps upgraded UI assets from being pinned to an older release.
+  event.respondWith(
+    fetch(event.request)
+      .then((response) => {
+        if (response.ok) {
+          const copy = response.clone();
+          caches.open(CACHE).then((cache) => cache.put(event.request, copy));
+        }
+        return response;
+      })
+      .catch(() => caches.match(event.request))
+  );
 });
