@@ -1,90 +1,56 @@
-<div align="center">
+<!-- SWIR-README-STANDARD:v2 -->
 
-<img src="assets/matrix-chat.svg" width="112" alt="Matrix AJAX Chat icon">
+<div align="center">
+<img width="100%" src="assets/readme/hero.svg" alt="Matrix AJAX Chat — self-hosted PHP and SQLite chat" />
+
+![PHP](https://img.shields.io/badge/PHP-8.1%2B-02050A?style=for-the-badge&logo=php&logoColor=62E5FF)
+![SQLite](https://img.shields.io/badge/SQLite-Storage-02050A?style=for-the-badge&logo=sqlite&logoColor=62E5FF)
+![PWA](https://img.shields.io/badge/PWA-Ready-02050A?style=for-the-badge&logo=pwa&logoColor=62E5FF)
+![Release](https://img.shields.io/badge/Release-v7.1.0-02050A?style=for-the-badge&logo=github&logoColor=62E5FF)
+
+[![CI](https://github.com/Swir/Matrix-Ajax-Chat/actions/workflows/ci.yml/badge.svg)](https://github.com/Swir/Matrix-Ajax-Chat/actions/workflows/ci.yml)
+[![Author](https://img.shields.io/badge/Author-Swir-0088FF?style=flat-square&logo=github)](https://github.com/Swir)
+
+[**Highlights**](#-highlights) · [**Install**](#-quick-start) · [**Security**](#-security--limitations) · [**Releases**](#-releases)
+</div>
 
 # Matrix AJAX Chat
 
-### Self-hosted PHP + SQLite chat rebuilt as a secure, modular Matrix Blue web app
+A self-hosted PHP + SQLite chat with a responsive Matrix Blue interface, global and invitation-based private conversations, PL/EN UI, PWA support, hardened sessions/uploads and encrypted message storage.
 
-**PHP 8.1+ · SQLite · AJAX · PWA · PL/EN · no framework required**
+<img width="100%" src="https://raw.githubusercontent.com/Swir/Swir/main/assets/power-divider-v4.svg" alt="SWIR electric divider" />
 
-[![CI](https://github.com/Swir/Matrix-Ajax-Chat/actions/workflows/ci.yml/badge.svg)](https://github.com/Swir/Matrix-Ajax-Chat/actions/workflows/ci.yml)
-[![Release](https://img.shields.io/github/v/release/Swir/Matrix-Ajax-Chat)](https://github.com/Swir/Matrix-Ajax-Chat/releases)
-[![PHP](https://img.shields.io/badge/PHP-8.1%2B-777BB4?logo=php&logoColor=white)](https://www.php.net/)
-[![Author](https://img.shields.io/badge/by-Swir-4cc9ff)](https://github.com/Swir)
+## 📍 Project Status
 
-</div>
+<p align="center"><img width="100%" src="assets/readme/progress-card.svg" alt="Matrix AJAX Chat product progress — N/A because no authoritative measurable roadmap is defined" /></p>
 
-## Matrix AJAX Chat v7.1
+| Item | Status |
+|---|---|
+| Current stage | Maintained v7.x web application |
+| Runtime | PHP 8.1+ with SQLite |
+| Latest public release | [v7.1.0](https://github.com/Swir/Matrix-Ajax-Chat/releases/tag/v7.1.0) |
+| Product progress | **N/A** — no authoritative measurable roadmap exists |
 
-v7.1 is a regression-recovery release built on the modular v7 architecture. It restores useful terminal behavior from the classic single-file build without reintroducing direct public upload paths or weakening the v7 security model.
+## 🚀 Overview
 
-### Restored from the classic build
+v7 introduced the modular PHP architecture and security model. v7.1 restores useful behavior from the classic single-file build—terminal commands, latency display, sounds, fullscreen, private-chat shortcuts and legacy attachment compatibility—without returning to direct public upload paths.
 
-- terminal commands: `/help`, `/ping`, `/clear`, `/whoami`
-- live request latency in the connection indicator
-- optional terminal sounds for messages/invites with a persistent mute toggle
-- fullscreen control
-- live message character counter and local typing/upload status indicators
-- accepted private-conversation shortcuts that remain visible when a peer goes offline
-- original attachment filenames
-- authenticated inline previews for image attachments
-- authenticated compatibility with legacy `::FILE_TAG::matrix_uploads/...` attachment records
+## ✨ Highlights
 
-### Current feature set
+| Feature | What it does |
+|---|---|
+| 💬 Chat | Global room plus invitation-based private conversations |
+| 🌍 Language | Polish/English auto-detection with manual switching |
+| 👤 Access | Registered accounts and guest access |
+| 🔐 Storage encryption | AES-256-GCM for new messages with legacy CBC read compatibility |
+| 🛡️ Web hardening | CSRF protection, regenerated sessions, hardened cookies and rate limits |
+| 📎 Attachments | MIME/size validation and authenticated download/preview paths |
+| 🗃️ Storage | SQLite WAL mode with indexed tables and presence cleanup |
+| 📱 PWA | Manifest, service worker and installable icons |
+| ⌨️ Terminal | `/help`, `/ping`, `/clear`, `/whoami` |
+| 🧪 CI | PHP 8.1–8.4 tests plus JavaScript/PHP syntax validation |
 
-- Matrix Blue responsive desktop/mobile interface
-- animated Matrix background
-- global chat and invitation-based private conversations
-- Polish/English auto-detection with a manual language switch
-- registered accounts plus guest access
-- per-user signature color, editable after login
-- SQLite WAL mode and indexed tables
-- online presence with stale-session cleanup
-- authenticated AES-256-GCM encryption for newly stored messages
-- legacy AES-256-CBC message decryption for upgrade compatibility
-- CSRF protection, hardened session cookies and regenerated session IDs
-- per-session rate limiting for authentication, messages, invites and uploads
-- safe downloads from non-public storage rather than direct upload URLs
-- MIME + size validation for JPG/PNG/GIF/WebP/PDF/ZIP/TXT
-- PWA manifest, service worker, SVG favicon and 192/512 PNG icons
-- versioned static cache that refreshes upgraded JS/CSS instead of pinning old UI assets
-- CI on PHP 8.1, 8.2, 8.3 and 8.4
-- versioned deploy ZIP + SHA256 in GitHub Releases
-
-## Architecture
-
-```text
-index.php              HTML entry point + authentication forms
-api.php                JSON/AJAX endpoint + safe attachment metadata
-download.php           authorized modern/legacy attachment downloads
-src/
-  Auth.php              sessions, CSRF, login/register/guest, user color
-  ChatService.php       messages, presence, private invitations, legacy attachment checks
-  Crypto.php            AES-256-GCM + legacy CBC reader
-  Database.php          SQLite initialization/migrations
-  UploadService.php     validated non-public file storage
-  I18n.php              Polish/English UI strings
-  Http.php              JSON and security headers
-  RateLimiter.php       lightweight abuse controls
-assets/
-  app.css               responsive Matrix Blue UI
-  app.js                polling, commands, sounds, composer, invites, PWA setup
-  matrix-chat.svg       application/project icon
-  icon-192.png          PWA icon
-  icon-512.png          PWA icon
-data/                   database, key and new uploads (runtime only)
-matrix_uploads/         legacy v6 uploads only, if upgrading an existing install
-```
-
-## Requirements
-
-- PHP **8.1+**
-- extensions: `pdo_sqlite`, `openssl`, `fileinfo`, `mbstring`
-- HTTPS strongly recommended for Internet-facing deployments
-- write permission for the `data/` directory
-
-## Install
+## ⚙️ Quick Start
 
 ```bash
 git clone https://github.com/Swir/Matrix-Ajax-Chat.git
@@ -94,69 +60,73 @@ php -S 127.0.0.1:8080
 
 Open `http://127.0.0.1:8080`.
 
-For production, point Apache/Nginx at the repository directory and **block direct HTTP access to `/data`, `/src`, `/tests` and any preserved legacy `/matrix_uploads` directory**. Attachments are served through `download.php` after authorization checks.
+For production, use Apache/Nginx with HTTPS and block direct HTTP access to `/data`, `/src`, `/tests` and any retained legacy `/matrix_uploads` directory. Attachments should be served through the authenticated application path.
 
-Example Nginx protection:
+## 📋 Requirements / Compatibility
 
-```nginx
-location ~ ^/(data|src|tests|matrix_uploads)/ {
-    deny all;
-    return 404;
-}
-```
+- PHP **8.1+**
+- extensions: `pdo_sqlite`, `openssl`, `fileinfo`, `mbstring`
+- write permission for `data/`
+- HTTPS strongly recommended for Internet-facing deployments
+- a web server configuration that prevents direct access to runtime/source directories
 
-## Upgrade from the legacy single-file build
+## 🎮 Usage / Workflow
 
-v7 performs a non-destructive migration on first start:
+Users can register or enter as guests, join the global chat, invite another user to a private conversation, exchange messages and upload supported files. The browser UI includes persistent sound/mute state, latency display, fullscreen and local typing/upload indicators.
 
-- `matrix_database.db` is copied to `data/matrix.sqlite` when no v7 database exists.
-- `matrix_secret.key` is copied to `data/matrix_secret.key`.
-- old CBC-encrypted messages remain readable.
-- new messages use authenticated AES-256-GCM.
-- v7.1 can display/download old attachment messages securely when their original files are still present in `matrix_uploads/`.
+## 🧠 Technology / Architecture
 
-**Important:** if the old installation contains `matrix_uploads/`, keep that folder beside `index.php` until you no longer need historical attachments. Do not expose the directory directly through the web server; v7.1 resolves legacy attachments through authenticated `download.php` requests.
-
-After verifying the upgraded installation and making a backup, legacy root-level database/key files can be removed. Keep `matrix_uploads/` only for as long as historical attachment access is required.
-
-## Terminal commands
-
-| Command | Action |
+| Layer | Technology / role |
 |---|---|
-| `/help` | Show available terminal commands |
-| `/ping` | Show latest measured AJAX latency |
-| `/clear` | Clear already displayed messages for the current channel in this browser session |
-| `/whoami` | Show current user and channel/node |
+| Entry/UI | `index.php`, Matrix Blue CSS/JS, AJAX polling |
+| API | `api.php` JSON endpoint |
+| Auth | sessions, CSRF, login/register/guest and user colors |
+| Storage | SQLite + runtime data under `data/` |
+| Crypto | AES-256-GCM; legacy CBC reader for upgrades |
+| Uploads | validated non-public storage + authorized `download.php` |
+| PWA | `manifest.webmanifest` + `sw.js` |
 
-## Attachments
+## 🔁 Upgrade from legacy builds
 
-New uploads are renamed internally, stored under `data/uploads/`, and are never linked directly. The message API returns only safe metadata such as the original filename, MIME type and size. Images can be previewed inline through an authenticated endpoint; other files download through the same authorization layer.
+When no v7 database exists, legacy `matrix_database.db` and `matrix_secret.key` can be migrated into `data/`. Historical CBC messages remain readable. If old attachments are still required, keep `matrix_uploads/` beside `index.php` but block direct web access; v7.1 resolves compatible legacy records through authorized downloads.
 
-Legacy attachments are revalidated before serving. The server checks the historical message, verifies the requesting user may see that conversation, rejects path traversal, detects the MIME type again and never exposes the filesystem path.
+## 🗺️ Progress
 
-## Storage and backups
+<p align="center"><img width="100%" src="assets/readme/progress-mini.svg" alt="Matrix AJAX Chat product roadmap progress — N/A" /></p>
 
-Back up the complete `data/` directory. It contains the SQLite database, server encryption key and new attachments. If upgrading from v6, also back up `matrix_uploads/` while historical attachments are still needed. Losing the encryption key makes encrypted message history unreadable.
+**Measured scope:** product-roadmap completion. **Result:** **N/A** because this repository does not define a canonical checklist/weighted roadmap. Release versions, CI success and feature count are not treated as product-completion percentages.
 
-This is **encryption at rest**, not end-to-end encryption: the server can decrypt stored messages to deliver them.
+## 📦 Releases
 
-## Development
+Latest verified public release: **v7.1.0**, with deploy ZIP and SHA-256 checksum.
+
+[**Open GitHub Releases →**](https://github.com/Swir/Matrix-Ajax-Chat/releases)
+
+## 🧪 Development
 
 ```bash
 php tests/run.php
 find . -name '*.php' -not -path './data/*' -exec php -l {} \;
 ```
 
-The regression suite checks cryptography, username/color validation, SQLite migrations, global/private flows, modern attachment authorization, legacy attachment parsing/access and filename sanitization.
+The regression suite covers cryptography, validation, SQLite migrations, global/private flows and modern/legacy attachment authorization.
 
-## Release
+## 🔐 Security / Limitations
 
-A merge commit containing `[release]` triggers the web release workflow. It runs tests, creates a deployable ZIP and publishes its SHA256 checksum.
+Read [SECURITY.md](SECURITY.md) before public deployment. Encryption is **at rest**, not end-to-end encryption: the server can decrypt stored messages to deliver them. Protect the server key and backups, keep PHP updated, restrict runtime/source directories and review reverse-proxy/web-server rules.
 
-## Security
+A repository license file is not currently present; review repository terms before redistribution.
 
-Read [SECURITY.md](SECURITY.md) before public deployment. Use HTTPS, restrict runtime/source directories, keep PHP updated, back up the encryption key, and review reverse-proxy/web-server configuration.
+## 🔎 Search Keywords
 
-## Author
+`self hosted PHP chat` • `PHP SQLite chat` • `AJAX chat application` • `Matrix Blue chat UI` • `private chat invitations` • `PHP PWA chat` • `SQLite web chat` • `AES GCM chat storage` • `multilingual PHP chat` • `secure attachment upload PHP` • `PHP 8 chat app` • `self hosted browser chat`
 
-Developed by **Swir** — https://github.com/Swir
+<img width="100%" src="https://raw.githubusercontent.com/Swir/Swir/main/assets/power-divider-v4.svg" alt="SWIR electric divider" />
+
+<div align="center">
+### `HOST • CHAT • PROTECT • EVOLVE`
+
+⭐ **If this project is useful, consider leaving a star.**
+
+[**← SWIR profile**](https://github.com/Swir) · [**All projects →**](https://github.com/Swir?tab=repositories)
+</div>
