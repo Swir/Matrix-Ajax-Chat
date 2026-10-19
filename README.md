@@ -14,6 +14,12 @@
 [**Highlights**](#-highlights) · [**Install**](#-quick-start) · [**Security**](#-security--limitations) · [**Releases**](#-releases)
 </div>
 
+## 📸 Screenshot
+
+![Matrix-Ajax-Chat application screenshot](docs/screenshots/application.jpg)
+
+The locally running chat interface with a temporary guest account and a sample message.
+
 # Matrix AJAX Chat
 
 A self-hosted PHP + SQLite chat with a responsive Matrix Blue interface, global and invitation-based private conversations, PL/EN UI, PWA support, hardened sessions/uploads and encrypted message storage.
